@@ -2,23 +2,22 @@
 clc; clear; close all;
 
 %% 读取图像
-image1 = imread('./Picture/test1.jpeg');
-image2 = imread('./Picture/test2.jpeg');
-image3 = imread('./Picture/test3.jpeg');
+image1 = imread('../Picture/test1.jpeg');
+image2 = imread('../Picture/test2.jpeg');
+image3 = imread('../Picture/test3.jpeg');
 
-image1_goal = imread('./Picture/test1_change.jpeg');
-image2_goal = imread('./Picture/test2_change.jpeg');
-image3_goal = imread('./Picture/test3_change.jpeg');
+image1_goal = imread('../Picture/test1_change.jpeg');
+image2_goal = imread('../Picture/test2_change.jpeg');
+image3_goal = imread('../Picture/test3_change.jpeg');
 
-%% 读取原始图像I
-% image = image1;
+image = image1;
 % image = image2;
-image = image3;
+% image = image3;
 
 %% 读取目标图像
-% image_goal = image1_goal;
+image_goal = image1_goal;
 % image_goal = image2_goal;
-image_goal = image3_goal;
+% image_goal = image3_goal;
 
 %% 将原始图像和目标图像转换为灰度图像
 image = rgb2gray(image);

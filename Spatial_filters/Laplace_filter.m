@@ -1,9 +1,15 @@
-% 读取图像
-I = imread('../Picture/test1.jpeg');
-% I = imread('../Picture/test2.jpeg');
-% I = imread('../Picture/test3.jpeg');
+% 8邻域拉普拉斯滤波器
+clc; clear; close all;
 
-image = I;
+%% 读取图像
+image1 = imread('../Picture/test1.jpeg');
+image2 = imread('../Picture/test2.jpeg');
+image3 = imread('../Picture/test3.jpeg');
+
+image = image1;
+
+%% 转换为灰度图像
+image = rgb2gray(image);
 
 % 将图像转换为double类型
 image = im2double(image);
@@ -22,7 +28,7 @@ enhanced_image = max(0, min(1, enhanced_image));
 
 % 显示增强后的图像
 figure(1);
-imshow(enhanced_image);
-
-figure(2);
+subplot(1, 2, 1);
 imshow(image);
+subplot(1, 2, 2);
+imshow(enhanced_image);
