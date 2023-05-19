@@ -10,6 +10,7 @@ image = image1;
 
 %% 转换为灰度图像
 image = rgb2gray(image);
+image = im2double(image);
 
 % 傅里叶变换并平移到中心
 img_fft = fftshift(fft2(image));
@@ -26,14 +27,32 @@ img_filter = img_fft .* H;
 % 傅里叶反变换并取实部和绝对值
 img_ifft = abs(real(ifft2(ifftshift(img_filter))));
 
+% 归一化
+img_ifft = img_ifft / max(img_ifft(:));
+
+% 叠加
+laplacian_image = image + img_ifft;
+
 % 显示滤波器和结果图
 figure;
-subplot(1, 2, 1);
+subplot(2, 2, 1);
 imagesc(H);
 colormap gray;
 colorbar;
 title('拉普拉斯滤波器');
 
-subplot(1, 2, 2);
-imshow(img_ifft, []);
+subplot(2, 2, 2);
+imshow(img_ifft);
 title('滤波后的图像');
+
+% 叠加原图
+laplacian_image = image + img_ifft;
+
+subplot(2, 2, 3);
+imshow(image);
+title('原图');
+
+subplot(2, 2, 4);
+imshow(laplacian_image);
+title('叠加后的图像');
+

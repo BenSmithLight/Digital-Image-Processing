@@ -16,18 +16,20 @@ img_fft = fftshift(fft2(image));
 
 % 设计钝化模板
 [M, N] = size(img_fft);
-[U, V] = meshgrid(-N/2:N/2-1, -M/2:M/2-1);
-D = sqrt(U.^2 + V.^2); % 距离频域中心的距离
-D0 = 50; % 截止频率
-H1 = 1 - exp(-D.^2 / (2 * D0^2)); % 高斯高通滤波器
+[U, V] = meshgrid(-N / 2:N / 2 - 1, -M / 2:M / 2 - 1);
+D = sqrt(U .^ 2 + V .^ 2); % 距离频域中心的距离
+D0 = 100; % 截止频率
+H1 = 1 - exp(-D .^ 2 / (2 * D0 ^ 2)); % 高斯高通滤波器
 H1 = 1 - H1; % 钝化模板
 
 % 设计高提升滤波器
-k = 5; % 增益系数
+k = 1; % 增益系数
 H2 = k - H1; % 高提升滤波器
+H2 = 1 * H2; % 增益系数为2
 
 % 循环显示不同类型的滤波器和结果图
 figure;
+
 for i = 1:2
     % 选择滤波器
     switch i
@@ -38,7 +40,7 @@ for i = 1:2
             H = H2;
             title_str = '高提升滤波器';
     end
-    
+
     % 进行频域滤波
     img_filter = img_fft .* H;
 
@@ -51,9 +53,8 @@ for i = 1:2
     colormap gray;
     colorbar;
     title(title_str);
-    
+
     subplot(2, 2, i * 2);
     imshow(img_ifft, []);
     title('滤波后的图像');
 end
-
