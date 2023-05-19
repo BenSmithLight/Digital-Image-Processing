@@ -55,29 +55,12 @@ Ir = Ir + image;
 Is = Is + image;
 Ip = Ip + image;
 
+Ir = uint8(Ir);
+Is = uint8(Is);
+Ip = uint8(Ip);
+
 % 显示原始图像、Roberts算子、Sobel算子和Prewitt算子的输出图像
 subplot(2, 2, 1); imshow(image); title('原始图像');
 subplot(2, 2, 2); imshow(Ir); title('Roberts算子锐化后的图像');
 subplot(2, 2, 3); imshow(Is); title('Sobel算子锐化后的图像');
 subplot(2, 2, 4); imshow(Ip); title('Prewitt算子锐化后的图像');
-
-% % 计算图像的梯度
-% [dx, dy] = gradient(double(image));
-
-% % 计算梯度幅值
-% gradient_magnitude = sqrt(dx.^2 + dy.^2);
-
-% image = im2double(image);
-
-% % 增强图像
-% enhanced_image = image + gradient_magnitude;
-
-% % 将像素值限制在0到255之间
-% % enhanced_image = max(0, min(255, enhanced_image));
-
-% % 显示增强后的图像
-% figure(1);
-% subplot(1, 2, 1);
-% imshow(image);
-% subplot(1, 2, 2);
-% imshow(uint8(enhanced_image));

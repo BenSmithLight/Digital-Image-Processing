@@ -26,6 +26,9 @@ enhanced_image = image - enhanced_image;
 % 将像素值限制在0到1之间
 enhanced_image = max(0, min(1, enhanced_image));
 
+% 将数值映射为0到255之间的整数
+enhanced_image = uint8(255 * enhanced_image);
+
 % 显示增强后的图像
 figure(1);
 subplot(1, 2, 1);
