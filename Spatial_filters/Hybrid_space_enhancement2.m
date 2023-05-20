@@ -1,4 +1,4 @@
-% 混合空间增强
+% 混合空间增强(用高提升滤波代替拉普拉斯)
 clc; clear;
 
 %% 读取图像
@@ -11,33 +11,35 @@ image = image3;
 %% 转换为灰度图像
 image = rgb2gray(image);
 
-%% 拉普拉斯突出细节
-% 将图像转换为double类型(0-1)
-image = im2double(image);
+%% 高提升滤波
+% 定义滤波器阶数
+k = 1;
 
-% 定义8邻域模板的拉普拉斯滤波器
-laplacian_filter = [0 1 0; 1 -4 1; 0 1 0];
+% 定义平滑滤波器
+blur_filter = fspecial('gaussian', [5 5], 2); % 5x5的高斯滤波器，标准差为2
 
-% 应用拉普拉斯滤波器
-laplacian_image = imfilter(image, laplacian_filter);
+% 应用平滑滤波器，得到平滑版本的图像
+smoothed_image = imfilter(image, blur_filter, 'replicate');
 
-% 对增强后的图像进行调整，以便显示
-laplacian_image = image - laplacian_image;
+% 计算非锐化掩蔽图像
+unsharp_mask = image - smoothed_image;
 
-% 将像素值限制在0到1之间
-laplacian_image = laplacian_image / max(laplacian_image(:));
+% 增强图像
+boosted_image = image + k * unsharp_mask;
 
-% 将数值映射为0到255之间的整数
-laplacian_image = uint8(255 * laplacian_image);
+% 将强度重新映射回0-255
+boosted_image = uint8(boosted_image);
 
 % 输出
 figure();
 subplot(4, 2, 1);
 imshow(image); title('原图像');
 subplot(4, 2, 2);
-imshow(laplacian_image); title('拉普拉斯突出细节');
+imshow(boosted_image); title('高提升滤波');
 
 %% 对原图像使用Sobel算子进行边缘强化
+% 将图像转换为double类型(0-1)
+image = im2double(image);
 % 获取图像的大小
 [M, N] = size(image);
 
@@ -89,11 +91,11 @@ imshow(box_image); title('盒式滤波');
 
 %% 将拉普拉斯图像与盒式滤波图像相乘
 % 将图像转换为double类型(0-1)
-laplacian_image = im2double(laplacian_image);
+boosted_image = im2double(boosted_image);
 box_image = im2double(box_image);
 
 % 相乘
-enhanced_image = laplacian_image .* box_image;
+enhanced_image = boosted_image .* box_image;
 
 % 将像素值限制在0到1之间
 enhanced_image = enhanced_image / max(enhanced_image(:));

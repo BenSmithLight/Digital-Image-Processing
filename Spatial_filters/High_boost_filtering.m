@@ -6,13 +6,13 @@ image1 = imread('../Picture/test1.jpeg');
 image2 = imread('../Picture/test2.jpeg');
 image3 = imread('../Picture/test3.jpeg');
 
-image = image1;
+image = image3;
 
 %% 转换为灰度图像
 image = rgb2gray(image);
 
 % 定义滤波器阶数
-k = 5
+k = 5;
 
 % 定义平滑滤波器
 blur_filter = fspecial('gaussian', [5 5], 2); % 5x5的高斯滤波器，标准差为2
