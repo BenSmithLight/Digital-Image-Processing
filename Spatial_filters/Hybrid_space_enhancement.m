@@ -1,12 +1,12 @@
 % 混合空间增强
-clc; clear;
+clc; clear;close all;
 
 %% 读取图像
 image1 = imread('../Picture/test1.jpeg');
 image2 = imread('../Picture/test2.jpeg');
 image3 = imread('../Picture/test3.jpeg');
 
-image = image1;
+image = image3;
 
 % 转换为灰度图像
 image = rgb2gray(image);
@@ -17,7 +17,7 @@ image = im2double(image);
 %% 拉普拉斯突出细节
 
 % 定义8邻域模板的拉普拉斯滤波器
-laplacian_filter = [0 1 0; 1 -4 1; 0 1 0];
+laplacian_filter = [1 1 1; 1 -8 1; 1 1 1];
 
 % 应用拉普拉斯滤波器
 laplacian_filter = imfilter(image, laplacian_filter, 'replicate');
@@ -29,6 +29,10 @@ laplacian_filter = imfilter(image, laplacian_filter, 'replicate');
 laplacian_image = image - laplacian_filter;
 
 % laplacian_image = mat2gray(laplacian_image);
+
+% 将数值映射为0到255之间的整数
+% laplacian_image = uint8(255 * laplacian_image);
+
 
 % 输出
 figure();
@@ -103,8 +107,7 @@ imshow(box_image); title('盒式滤波', 'FontSize', 20);
 % box_image = im2double(box_image);
 
 % 相乘
-enhanced_filter = laplacian_image .* box_image;
-
+enhanced_filter = (0.5.*laplacian_image) .* (0.5 .* box_image);
 
 % 将像素值限制在0到1之间
 % enhanced_image = enhanced_image / max(enhanced_image(:));
@@ -113,6 +116,7 @@ enhanced_filter = laplacian_image .* box_image;
 % enhanced_image = uint8(255 * enhanced_image);
 
 % 输出
+figure;
 subplot(1, 3, 1);
 imshow(image); title('原图像', 'FontSize', 20);
 subplot(1, 3, 2);
@@ -121,6 +125,8 @@ imshow(enhanced_filter); title('拉普拉斯与盒式滤波相乘', 'FontSize', 
 %% 叠加原图和增强图像
 % 将图像转换为double类型(0-1)
 % enhanced_image = im2double(enhanced_image);
+
+% enhanced_filter = mat2gray(enhanced_filter);
 
 % 叠加
 enhanced_image = image + enhanced_filter;
@@ -139,8 +145,10 @@ imshow(enhanced_image); title('叠加原图和增强图像', 'FontSize', 20);
 
 
 %% 对混合图像进行伽马校正
-img_gamma = imadjust(enhanced_image, [], [], 0.5); % gamma值可以调整
+img_gamma = imadjust(enhanced_image, [], [], 0.6); % gamma值可以调整
 
 % 输出
 figure;
 imshow(img_gamma); title('伽马校正');
+figure;
+imshow(image);
