@@ -6,7 +6,7 @@ image1 = imread('../Picture/test1.jpeg');
 image2 = imread('../Picture/test2.jpeg');
 image3 = imread('../Picture/test3.jpeg');
 
-image = image3;
+image = image1;
 
 % 转换为灰度图像
 image = rgb2gray(image);
@@ -129,7 +129,7 @@ imshow(enhanced_filter); title('拉普拉斯与盒式滤波相乘', 'FontSize', 
 % enhanced_filter = mat2gray(enhanced_filter);
 
 % 叠加
-enhanced_image = image + enhanced_filter;
+enhanced_image = 0.6 * image + enhanced_filter;
 
 % 将像素值限制在0到1之间
 % enhanced_image = enhanced_image / max(enhanced_image(:));
@@ -145,10 +145,11 @@ imshow(enhanced_image); title('叠加原图和增强图像', 'FontSize', 20);
 
 
 %% 对混合图像进行伽马校正
-img_gamma = imadjust(enhanced_image, [], [], 0.6); % gamma值可以调整
+img_gamma = imadjust(enhanced_image, [], [], 0.5); % gamma值可以调整
 
 % 输出
 figure;
-imshow(img_gamma); title('伽马校正');
-figure;
-imshow(image);
+subplot(1, 2, 1);
+imshow(image); title('原图像', 'FontSize', 20);
+subplot(1, 2, 2);
+imshow(img_gamma); title('伽马校正', 'FontSize', 20);
