@@ -19,6 +19,9 @@ laplacian_filter = [0 1 0; 1 -4 1; 0 1 0];
 
 % 应用拉普拉斯滤波器
 enhanced_image = imfilter(image, laplacian_filter);
+enhanced_image = mat2gray(enhanced_image);
+
+figure();imshow(enhanced_image);
 
 % 对增强后的图像进行调整，以便显示
 enhanced_image = image - enhanced_image;
@@ -30,7 +33,7 @@ enhanced_image = max(0, min(1, enhanced_image));
 enhanced_image = uint8(255 * enhanced_image);
 
 % 显示增强后的图像
-figure(1);
+figure();
 subplot(1, 2, 1);
 imshow(image);
 subplot(1, 2, 2);
