@@ -6,7 +6,7 @@ image1 = imread('../Picture/test1.jpeg');
 image2 = imread('../Picture/test2.jpeg');
 image3 = imread('../Picture/test3.jpeg');
 
-image = image1;
+image = image2;
 
 % 转换为灰度图像
 image = rgb2gray(image);
@@ -28,7 +28,7 @@ laplacian_filter = imfilter(image, laplacian_filter, 'replicate');
 % 对增强后的图像进行调整，以便显示
 laplacian_image = image - laplacian_filter;
 
-% laplacian_image = mat2gray(laplacian_image);
+% laplacian_image = mat2gray(laplacian_imagesubplot(1);
 
 % 将数值映射为0到255之间的整数
 % laplacian_image = uint8(255 * laplacian_image);
@@ -36,11 +36,11 @@ laplacian_image = image - laplacian_filter;
 
 % 输出
 figure();
-subplot(1, 3, 1);
+subplot(2, 3, 1);
 imshow(image); title('原图像', 'FontSize', 20);
-subplot(1, 3, 2);
+subplot(2, 3, 2);
 imshow(laplacian_filter, []); title('拉普拉斯变换', 'FontSize', 20);
-subplot(1, 3, 3);
+subplot(2, 3, 3);
 imshow(laplacian_image); title('拉普拉斯突出细节', 'FontSize', 20);
 
 %% 对原图像使用Sobel算子进行边缘强化
@@ -83,10 +83,7 @@ Sobel_image = Is + image;
 % Is = mat2gray(Is);
 
 % 输出
-figure();
-subplot(1, 3, 1);
-imshow(image); title('原图像', 'FontSize', 20);
-subplot(1, 3, 2);
+subplot(2, 3, 4);
 imshow(Sobel_image); title('Sobel算子边缘强化', 'FontSize', 20);
 
 
@@ -98,7 +95,7 @@ box_filter = fspecial('average', filter_size);
 box_image = imfilter(Sobel_image, box_filter, 'replicate');
 
 % 输出
-subplot(1, 3, 3);
+subplot(2, 3, 5);
 imshow(box_image); title('盒式滤波', 'FontSize', 20);
 
 %% 将拉普拉斯图像与盒式滤波图像相乘
@@ -107,8 +104,7 @@ imshow(box_image); title('盒式滤波', 'FontSize', 20);
 % box_image = im2double(box_image);
 
 % 相乘
-enhanced_filter = laplacian_image .* box_image;
-
+enhanced_filter = (0.5.*laplacian_image) .* (0.5 .* box_image);
 
 % 将像素值限制在0到1之间
 % enhanced_image = enhanced_image / max(enhanced_image(:));
@@ -116,19 +112,14 @@ enhanced_filter = laplacian_image .* box_image;
 % 将数值映射为0到255之间的整数
 % enhanced_image = uint8(255 * enhanced_image);
 
-% 输出
-figure;
-subplot(1, 3, 1);
-imshow(image); title('原图像', 'FontSize', 20);
-subplot(1, 3, 2);
-imshow(enhanced_filter); title('拉普拉斯与盒式滤波相乘', 'FontSize', 20);
-
 %% 叠加原图和增强图像
 % 将图像转换为double类型(0-1)
 % enhanced_image = im2double(enhanced_image);
 
+% enhanced_filter = mat2gray(enhanced_filter);
+
 % 叠加
-enhanced_image = image + enhanced_filter;
+enhanced_image = 0.6 * image + enhanced_filter;
 
 % 将像素值限制在0到1之间
 % enhanced_image = enhanced_image / max(enhanced_image(:));
@@ -139,7 +130,7 @@ enhanced_image = image + enhanced_filter;
 % enhanced_image = uint8(255 * enhanced_image);
 
 % 输出
-subplot(1, 3, 3);
+subplot(2, 3, 6);
 imshow(enhanced_image); title('叠加原图和增强图像', 'FontSize', 20);
 
 
@@ -148,4 +139,7 @@ img_gamma = imadjust(enhanced_image, [], [], 0.5); % gamma值可以调整
 
 % 输出
 figure;
-imshow(img_gamma); title('伽马校正');
+subplot(1, 2, 1);
+imshow(img_gamma); title('伽马校正', 'FontSize', 20);
+subplot(1, 2, 2);
+imhist(img_gamma); title('伽马校正直方图', 'FontSize', 20);
