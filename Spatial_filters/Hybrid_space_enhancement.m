@@ -149,7 +149,9 @@ img_gamma = imadjust(enhanced_image, [], [], 0.5); % gamma值可以调整
 
 % 输出
 figure;
-subplot(1, 2, 1);
+subplot(1, 3, 1);
 imshow(image); title('原图像', 'FontSize', 20);
-subplot(1, 2, 2);
+subplot(1, 3, 2);
 imshow(img_gamma); title('伽马校正', 'FontSize', 20);
+subplot(1, 3, 3);
+imhist(img_gamma); title('伽马校正直方图', 'FontSize', 20);

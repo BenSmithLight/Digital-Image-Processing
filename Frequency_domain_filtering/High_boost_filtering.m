@@ -10,6 +10,7 @@ image = image1;
 
 %% 转换为灰度图像
 image = rgb2gray(image);
+image = im2double(image);
 
 % 傅里叶变换并平移到中心
 img_fft = fftshift(fft2(image));
@@ -23,9 +24,9 @@ H1 = 1 - exp(-D .^ 2 / (2 * D0 ^ 2)); % 高斯高通滤波器
 H1 = 1 - H1; % 钝化模板
 
 % 设计高提升滤波器
-k = 1; % 增益系数
+k = 1.2; % 增益系数
 H2 = k - H1; % 高提升滤波器
-H2 = 1 * H2; % 增益系数为2
+H2 = 1 * H2;
 
 % 循环显示不同类型的滤波器和结果图
 figure;
@@ -55,6 +56,15 @@ for i = 1:2
     title(title_str);
 
     subplot(2, 2, i * 2);
-    imshow(img_ifft, []);
+    imshow(img_ifft);
     title('滤波后的图像');
 end
+
+enhanced_image = img_ifft + image;
+figure;
+subplot(1, 2, 1);
+imshow(image);
+title('原图像');
+subplot(1, 2, 2);
+imshow(enhanced_image)
+title('增强后的图像');
