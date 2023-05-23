@@ -6,9 +6,10 @@ image1 = imread('../Picture/test1.jpeg');
 image2 = imread('../Picture/test2.jpeg');
 image3 = imread('../Picture/test3.jpeg');
 
+% 指定处理的图像
 image = image1;
 
-%% 转换为灰度图像
+% 转换为灰度图像
 image = rgb2gray(image);
 
 % 将图像转换为double类型(0-1)
@@ -24,7 +25,7 @@ img_fft = fftshift(fft2(image));
 D = sqrt(U.^2 + V.^2); % 距离频域中心的距离
 H = -4 * pi^2 * D.^2; % 拉普拉斯滤波器
 
-% 使用窗函数
+% 使用窗函数避免振铃现象
 w = hamming(M) * hamming(N)'; % 汉明窗
 H = H .* w; % 窗函数乘以滤波器
 
@@ -40,26 +41,22 @@ img_ifft = mat2gray(img_ifft);
 % 叠加
 laplacian_image = image + img_ifft;
 
+% 归一化
 laplacian_image = mat2gray(laplacian_image);
 
 % 显示滤波器和结果图
 figure;
-subplot(2, 2, 1);
-imshow(image);
+subplot(2, 2, 1); imshow(image);
 title('原图', 'FontSize', 20);
 
-subplot(2, 2, 2);
-imagesc(H);
-colormap gray;
-colorbar;
+subplot(2, 2, 2); imagesc(H);
+colormap gray; colorbar;
 title('拉普拉斯滤波器', 'FontSize', 20);
 
-subplot(2, 2, 3);
-imshow(img_ifft);
+subplot(2, 2, 3); imshow(img_ifft);
 title('滤波后的图像', 'FontSize', 20);
 
-subplot(2, 2, 4);
-imshow(laplacian_image);
+subplot(2, 2, 4); imshow(laplacian_image);
 title('叠加后的图像', 'FontSize', 20);
 
 %% 高提升滤波
@@ -77,7 +74,6 @@ H1 = 1 - H1; % 钝化模板
 % 设计高提升滤波器
 k = 1.2; % 增益系数
 H2 = k - H1; % 高提升滤波器
-H2 = 1 * H2;
 
 % 循环显示不同类型的滤波器和结果图
 figure;
@@ -100,36 +96,30 @@ for i = 1:2
     img_ifft = abs(real(ifft2(ifftshift(img_filter))));
 
     % 显示滤波器和结果图
-    subplot(2, 2, i * 2 - 1);
-    imagesc(H);
-    colormap gray;
-    colorbar;
+    subplot(2, 2, i * 2 - 1); imagesc(H);
+    colormap gray; colorbar;
     title(title_str, 'FontSize', 20);
 
-    subplot(2, 2, i * 2);
-    imshow(img_ifft, []);
+    subplot(2, 2, i * 2); imshow(img_ifft, []);
     title('滤波后的图像', 'FontSize', 20);
 end
 
 % 叠加
 highboost_image = image + img_ifft;
-% highboost_image = mat2gray(highboost_image);
 
 % 显示原图和结果图
 figure;
-subplot(1, 2, 1);
-imshow(image);
+subplot(1, 2, 1); imshow(image);
 title('原图', 'FontSize', 20);
 
-subplot(1, 2, 2);
-imshow(highboost_image);
+subplot(1, 2, 2); imshow(highboost_image);
 title('高提升滤波后的图像', 'FontSize', 20);
 
 %% 对高增强滤波进行低通滤波
 % 傅里叶变换并平移到中心
 img_fft = fftshift(fft2(highboost_image));
 
-% 设计不同类型的低通滤波器
+% 设计高斯低通滤波器
 [M, N] = size(img_fft);
 [U, V] = meshgrid(-N/2:N/2-1, -M/2:M/2-1);
 D = sqrt(U.^2 + V.^2); % 距离频域中心的距离
@@ -138,50 +128,37 @@ D0 = 200; % 截止频率
 % 高斯低通滤波器
 H2 = exp(-D.^2 / (2 * D0^2));
 
-% 循环显示不同类型的滤波器和结果图
-
-H = H2;
-title_str = '高斯低通滤波器';
 % 进行频域滤波
-img_filter = img_fft .* H;
+img_filter = img_fft .* H2;
 
 % 傅里叶反变换并取实部和绝对值
 smooth_image = abs(real(ifft2(ifftshift(img_filter))));
 
 % 显示滤波器和结果图
 figure;
-subplot(2, 2, 1);
-imshow(image);
+subplot(2, 2, 1); imshow(image);
 title('原图', 'FontSize', 20);
 
 
-subplot(2, 2, 2);
-imagesc(H);
-colormap gray;
-colorbar;
-title(title_str, 'FontSize', 20);
-
+subplot(2, 2, 2); imagesc(H2);
+colormap gray; colorbar;
+title('高斯低通滤波器', 'FontSize', 20);
 
 % 拉普拉斯增强后的图像与低通滤波后的图像相乘
-
 mixed_image = laplacian_image .* smooth_image;
-
-% imshow(mixed_image);
-% title('mixed_image', 'FontSize', 20);
 
 % 叠加
 mixed_image = 0.6 * image + mixed_image;
 
-subplot(2, 2, 3);
-imshow(smooth_image);
+% 绘制图形
+subplot(2, 2, 3); imshow(smooth_image);
 title('滤波后的图像', 'FontSize', 20);
 
-subplot(2, 2, 4);
-imshow(mixed_image);
+subplot(2, 2, 4); imshow(mixed_image);
 title('混合增强后的图像', 'FontSize', 20);
 
 %% 同态滤波
-%% 读取图像
+% 读取图像
 mixed_image = uint8(mixed_image * 255);
 
 % 取对数
@@ -190,20 +167,17 @@ img_log = log(double(mixed_image) + 1);
 % 傅里叶变换并平移到中心
 img_fft = fftshift(fft2(img_log));
 
-% 傅里叶变换并平移到中心
 % 设计同态滤波器
 [M, N] = size(img_fft);
 [U, V] = meshgrid(-N/2:N/2-1, -M/2:M/2-1);
 D = sqrt(U.^2 + V.^2); % 距离频域中心的距离
-
-% 循环显示不同参数下的结果
-figure;
 rH = 0.6; % 高频增益
 rL = 0.5; % 低频增益
 D0 = 50; % 截止频率
 c = 10; % 衰减系数
 
-H = (rH - rL) * (1 - exp(-c * (D.^2 / D0^2))) + rL; % 同态滤波器
+% 生成同态滤波器
+H = (rH - rL) * (1 - exp(-c * (D.^2 / D0^2))) + rL; 
 
 % 进行频域滤波
 img_filter = img_fft .* H;
@@ -215,26 +189,26 @@ img_ifft = real(ifft2(ifftshift(img_filter)));
 img_out = exp(img_ifft) - 1;
 img_out = mat2gray(img_out);
 
-
 % 显示原图和结果图
-subplot(2, 2, 1);
-imshow(image);
+figure;
+subplot(2, 2, 1); imshow(image);
 title('原图', 'fontSize', 20');
 subplot(2, 2, 2);
 imagesc(log(abs(img_fft) + 1)); % 使用对数变换和绝对值来增强可视化效果
-colormap gray;
-colorbar;
+colormap gray; colorbar;
 title('原图的频谱图', 'fontSize', 20');
-subplot(2, 2, 3);
-imshow(img_out);
+subplot(2, 2, 3); imshow(img_out);
 title('同态滤波后的图像', 'fontSize', 20');
-subplot(2, 2, 4);
+
+% 获取同态滤波后的频谱图
 img_out = uint8(img_out * 255);
 % 取对数
 img_log = log(double(img_out) + 1);
 % 傅里叶变换并平移到中心
 img_fft = fftshift(fft2(img_log));
+
+% 绘制图形
+subplot(2, 2, 4);
 imagesc(log(abs(img_fft) + 1)); % 使用对数变换和绝对值来增强可视化效果
-colormap gray;
-colorbar;
+colormap gray; colorbar;
 title('滤波后的频谱图', 'fontSize', 20');
