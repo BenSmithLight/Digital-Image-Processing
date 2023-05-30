@@ -7,7 +7,7 @@ image2 = imread('../Picture/test2.jpeg');
 image3 = imread('../Picture/test3.jpeg');
 
 % 指定处理的图像
-image = image1;
+image = image3;
 
 % 转换为灰度图像
 image = rgb2gray(image);
@@ -42,22 +42,18 @@ img_ifft = mat2gray(img_ifft);
 laplacian_image = image + img_ifft;
 
 % 归一化
-laplacian_image = mat2gray(laplacian_image);
+% laplacian_image = mat2gray(laplacian_image);
 
 % 显示滤波器和结果图
 figure;
-subplot(2, 2, 1); imshow(image);
+subplot(2, 3, 1); imshow(image);
 title('原图', 'FontSize', 20);
 
-subplot(2, 2, 2); imagesc(H);
-colormap gray; colorbar;
-title('拉普拉斯滤波器', 'FontSize', 20);
+subplot(2, 3, 2); imshow(img_ifft);
+title('拉普拉斯滤波', 'FontSize', 20);
 
-subplot(2, 2, 3); imshow(img_ifft);
-title('滤波后的图像', 'FontSize', 20);
-
-subplot(2, 2, 4); imshow(laplacian_image);
-title('叠加后的图像', 'FontSize', 20);
+subplot(2, 3, 3); imshow(laplacian_image);
+title('拉普拉斯增强', 'FontSize', 20);
 
 %% 高提升滤波
 % 傅里叶变换并平移到中心
@@ -76,7 +72,6 @@ k = 1.2; % 增益系数
 H2 = k - H1; % 高提升滤波器
 
 % 循环显示不同类型的滤波器和结果图
-figure;
 
 for i = 1:2
     % 选择滤波器
@@ -94,25 +89,16 @@ for i = 1:2
 
     % 傅里叶反变换并取实部和绝对值
     img_ifft = abs(real(ifft2(ifftshift(img_filter))));
-
-    % 显示滤波器和结果图
-    subplot(2, 2, i * 2 - 1); imagesc(H);
-    colormap gray; colorbar;
-    title(title_str, 'FontSize', 20);
-
-    subplot(2, 2, i * 2); imshow(img_ifft, []);
-    title('滤波后的图像', 'FontSize', 20);
 end
+
+% 显示滤波器和结果图
 
 % 叠加
 highboost_image = image + img_ifft;
 
 % 显示原图和结果图
-figure;
-subplot(1, 2, 1); imshow(image);
-title('原图', 'FontSize', 20);
 
-subplot(1, 2, 2); imshow(highboost_image);
+subplot(2, 3, 4); imshow(highboost_image);
 title('高提升滤波后的图像', 'FontSize', 20);
 
 %% 对高增强滤波进行低通滤波
@@ -135,14 +121,6 @@ img_filter = img_fft .* H2;
 smooth_image = abs(real(ifft2(ifftshift(img_filter))));
 
 % 显示滤波器和结果图
-figure;
-subplot(2, 2, 1); imshow(image);
-title('原图', 'FontSize', 20);
-
-
-subplot(2, 2, 2); imagesc(H2);
-colormap gray; colorbar;
-title('高斯低通滤波器', 'FontSize', 20);
 
 % 拉普拉斯增强后的图像与低通滤波后的图像相乘
 mixed_image = laplacian_image .* smooth_image;
@@ -151,10 +129,10 @@ mixed_image = laplacian_image .* smooth_image;
 mixed_image = 1.2 * image + 0.4 * mixed_image;
 
 % 绘制图形
-subplot(2, 2, 3); imshow(smooth_image);
-title('滤波后的图像', 'FontSize', 20);
+subplot(2, 3, 5); imshow(smooth_image);
+title('高斯低通滤波', 'FontSize', 20);
 
-subplot(2, 2, 4); imshow(mixed_image);
+subplot(2, 3, 6); imshow(mixed_image);
 title('混合增强后的图像', 'FontSize', 20);
 
 %% 同态滤波
